@@ -1,7 +1,7 @@
 from machine import Pin, PWM, Timer, I2C
 import time
 import json
-from simple_pid import PID
+from lib.PID import PID
 from lib import lidar as Lidar
 from typing import Dict
 
@@ -63,6 +63,10 @@ class DeskController:
         # Timer for periodic updates
         self.update_timer = Timer(-1)
         self.update_timer.init(period=100, mode=Timer.PERIODIC, callback=self.update)
+
+        # Timer for printing PID components
+        self.print_pid_timer = Timer(-1)
+        self.print_pid_timer.init(period=5000, mode=Timer.PERIODIC, callback=self.print_pid_components)
 
     def set_debug_mode(self, debug: bool) -> None:
         self.debug_mode = debug
@@ -269,6 +273,25 @@ class DeskController:
            (distance_motor2 is not None and (distance_motor2 >= self.max_height or distance_motor2 <= self.min_height)):
             print("Height limit exceeded, stopping motors.")
             self.set_break()
+
+    @micropython.native
+    def print_pid_components(self, timer: Timer) -> None:
+        distance_motor1 = self.lidar_motor1.distance()
+        distance_motor2 = self.lidar_motor2.distance()
+
+        if distance_motor1 is not None:
+            pos1: int = int(distance_motor1)
+            p1 = self.pid_motor1.Kp * (self.pid_motor1.setpoint - pos1)
+            i1 = self.pid_motor1._integral
+            d1 = self.pid_motor1._derivative
+            print(f"Motor 1 PID components: P={p1}, I={i1}, D={d1}")
+
+        if distance_motor2 is not None:
+            pos2: int = int(distance_motor2)
+            p2 = self.pid_motor2.Kp * (self.pid_motor2.setpoint - pos2)
+            i2 = self.pid_motor2._integral
+            d2 = self.pid_motor2._derivative
+            print(f"Motor 2 PID components: P={p2}, I={i2}, D={d2}")
 
 # Example usage
 desk = DeskController()
