@@ -72,12 +72,10 @@ class DeskController:
         self.debug_mode = debug
         print(f"Debug mode set to {self.debug_mode}")
 
-    @micropython.native
     def save_position(self, position: Dict[str, int]) -> None:
         with open(self.nvm_file, 'w') as f:
             json.dump(position, f)
 
-    @micropython.native
     def load_position(self) -> Dict[str, int]:
         try:
             with open(self.nvm_file, 'r') as f:
@@ -85,7 +83,7 @@ class DeskController:
         except OSError:
             return {"motor1": 0, "motor2": 0}
 
-    @micropython.native
+
     def set_break(self) -> None:
         print("Setting break: stopping all motors")
         self.pwm_motor1_in1.duty(0)
@@ -93,7 +91,6 @@ class DeskController:
         self.pwm_motor2_in1.duty(0)
         self.pwm_motor2_in2.duty(0)
 
-    @micropython.native
     def run_down(self, duty_cycle: int, duration: float, motor_id: int = 0) -> None:
         print(f"Running down {'both motors' if motor_id == 0 else f'motor {motor_id}'} with duty cycle {duty_cycle} for {duration} seconds")
         self._ramp_pwm_up(duty_cycle, motor_id)
@@ -102,7 +99,6 @@ class DeskController:
         self.set_break()
         self._ramp_pwm_down(motor_id)
 
-    @micropython.native
     def run_up(self, duty_cycle: int, duration: float, motor_id: int = 0) -> None:
         print(f"Running up {'both motors' if motor_id == 0 else f'motor {motor_id}'} with duty cycle {duty_cycle} for {duration} seconds")
         self._ramp_pwm_up(duty_cycle, motor_id)
@@ -111,7 +107,6 @@ class DeskController:
         self.set_break()
         self._ramp_pwm_down(motor_id)
 
-    @micropython.native
     def _set_motor_duty(self, motor_id: int, duty_cycle: int, direction: str) -> None:
         if motor_id == 0:
             self.pwm_motor1_in1.duty(0 if direction == 'up' else duty_cycle)
@@ -125,7 +120,6 @@ class DeskController:
             self.pwm_motor2_in1.duty(0 if direction == 'up' else duty_cycle)
             self.pwm_motor2_in2.duty(duty_cycle if direction == 'up' else 0)
 
-    @micropython.native
     def _ramp_pwm_up(self, target_duty_cycle: int, motor_id: int = 0) -> None:
         step_size = 10
         for duty_cycle in range(0, target_duty_cycle + 1, step_size):
@@ -133,7 +127,6 @@ class DeskController:
             print(f"Ramping up PWM for {'both motors' if motor_id == 0 else f'motor {motor_id}'}: {duty_cycle}%")
             time.sleep(0.1)
 
-    @micropython.native
     def _ramp_pwm_down(self, motor_id: int = 0) -> None:
         step_size = 10
         for duty_cycle in range(100, -1, -step_size):
@@ -141,14 +134,12 @@ class DeskController:
             print(f"Ramping down PWM for {'both motors' if motor_id == 0 else f'motor {motor_id}'}: {duty_cycle}%")
             time.sleep(0.1)
 
-    @micropython.native
     def motor_controller(self, enable_power: bool) -> None:
         print(f"Setting motor controller to {'enabled' if enable_power else 'disabled'}")
         enable_power_active_low: bool = not enable_power
         self.motor1_enable.value(enable_power_active_low)
         self.motor2_enable.value(enable_power_active_low)
 
-    @micropython.native
     def move_to_position(self, target_position: int) -> None:
         self.pid_motor1.setpoint = target_position
         self.pid_motor2.setpoint = target_position
@@ -177,7 +168,6 @@ class DeskController:
                 distance_motor2 is not None and abs(distance_motor2 - target_position) <= 1):
                 break
 
-    @micropython.native
     def home_position(self) -> None:
         print("Homing...")
 
@@ -207,8 +197,7 @@ class DeskController:
         self.save_position({"motor1": self.position_motor1, "motor2": self.position_motor2})
         print(f"Homing complete. New zero positions: Motor1={self.position_motor1}, Motor2={self.position_motor2}")
 
-    # Update function to be called at a fixed interval
-    @micropython.native
+
     def update(self, timer: Timer) -> None:
         print("Update function called")
         distance_motor1 = self.lidar_motor1.distance()
@@ -228,7 +217,7 @@ class DeskController:
                 self.pid_motor2.setpoint = average_position
                 print(f"Synchronizing motors: new setpoint {average_position}")
 
-    @micropython.native
+
     def check_height_limits(self, timer: Timer) -> None:
         distance_motor1 = self.lidar_motor1.distance()
         distance_motor2 = self.lidar_motor2.distance()
@@ -238,7 +227,7 @@ class DeskController:
             print("Height limit exceeded, stopping motors.")
             self.set_break()
 
-    @micropython.native
+
     def print_pid_components(self, timer: Timer) -> None:
         distance_motor1 = self.lidar_motor1.distance()
         distance_motor2 = self.lidar_motor2.distance()
@@ -257,9 +246,3 @@ class DeskController:
             d2 = self.pid_motor2._derivative
             print(f"Motor 2 PID components: P={p2}, I={i2}, D={d2}")
 
-# Example usage
-desk = DeskController()
-desk.set_debug_mode(True)
-desk.home_position()  # Perform homing operation
-desk.run_up(512, 2)  # Run both motors up with 50% duty cycle for 2 seconds
-desk.run_down(512, 2, 1)  # Run motor 1 down with 50% duty cycle for 2 seconds
