@@ -15,10 +15,10 @@ class DeskController:
         pwm_freq: int = 10000  # 10kHz
         
         # Initialize PWM channels
-        self.pwm_motor1_in1: PWM = PWM(Pin(15), freq=pwm_freq, duty=0, channel=0)
-        self.pwm_motor1_in2: PWM = PWM(Pin(18), freq=pwm_freq, duty=0, channel=0)
-        self.pwm_motor2_in1: PWM = PWM(Pin(19), freq=pwm_freq, duty=0, channel=0)
-        self.pwm_motor2_in2: PWM = PWM(Pin(21), freq=pwm_freq, duty=0, channel=0)
+        self.pwm_motor1_in1: PWM = PWM(Pin(15), freq=pwm_freq, duty=0)
+        self.pwm_motor1_in2: PWM = PWM(Pin(18), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in1: PWM = PWM(Pin(19), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in2: PWM = PWM(Pin(21), freq=pwm_freq, duty=0)
         
         # Position tracking
         self.position_motor1: int = 0
@@ -44,7 +44,7 @@ class DeskController:
         self.i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)
         time.sleep(1)
         slaves = self.i2c.scan()
-        if self.LIDAR_ADDRESS_1 or self.LIDAR_ADDRESS_2 not in slaves:
+        if self.LIDAR_ADDRESS_1 not in slaves or self.LIDAR_ADDRESS_2 not in slaves:
             print('Bus error: Please check LIDAR wiring')
     
         self.lidar_motor1 = Lidar.LIDAR(self.i2c, self.LIDAR_ADDRESS_1)
@@ -95,86 +95,50 @@ class DeskController:
 
     @micropython.native
     def run_down(self, duty_cycle: int, duration: float, motor_id: int = 0) -> None:
-        if motor_id == 0:
-            print(f"Running down both motors with duty cycle {duty_cycle} for {duration} seconds")
-            self._ramp_pwm_up(duty_cycle)
-            self.pwm_motor1_in1.duty(duty_cycle)
-            self.pwm_motor1_in2.duty(0)
-            self.pwm_motor2_in1.duty(duty_cycle)
-            self.pwm_motor2_in2.duty(0)
-        else:
-            print(f"Running down motor {motor_id} with duty cycle {duty_cycle} for {duration} seconds")
-            self._ramp_pwm_up(duty_cycle, motor_id)
-            if motor_id == 1:
-                self.pwm_motor1_in1.duty(duty_cycle)
-                self.pwm_motor1_in2.duty(0)
-            elif motor_id == 2:
-                self.pwm_motor2_in1.duty(duty_cycle)
-                self.pwm_motor2_in2.duty(0)
+        print(f"Running down {'both motors' if motor_id == 0 else f'motor {motor_id}'} with duty cycle {duty_cycle} for {duration} seconds")
+        self._ramp_pwm_up(duty_cycle, motor_id)
+        self._set_motor_duty(motor_id, duty_cycle, direction='down')
         time.sleep(duration)
         self.set_break()
         self._ramp_pwm_down(motor_id)
 
     @micropython.native
     def run_up(self, duty_cycle: int, duration: float, motor_id: int = 0) -> None:
-        if motor_id == 0:
-            print(f"Running up both motors with duty cycle {duty_cycle} for {duration} seconds")
-            self._ramp_pwm_up(duty_cycle)
-            self.pwm_motor1_in1.duty(0)
-            self.pwm_motor1_in2.duty(duty_cycle)
-            self.pwm_motor2_in1.duty(0)
-            self.pwm_motor2_in2.duty(duty_cycle)
-        else:
-            print(f"Running up motor {motor_id} with duty cycle {duty_cycle} for {duration} seconds")
-            self._ramp_pwm_up(duty_cycle, motor_id)
-            if motor_id == 1:
-                self.pwm_motor1_in1.duty(0)
-                self.pwm_motor1_in2.duty(duty_cycle)
-            elif motor_id == 2:
-                self.pwm_motor2_in1.duty(0)
-                self.pwm_motor2_in2.duty(duty_cycle)
+        print(f"Running up {'both motors' if motor_id == 0 else f'motor {motor_id}'} with duty cycle {duty_cycle} for {duration} seconds")
+        self._ramp_pwm_up(duty_cycle, motor_id)
+        self._set_motor_duty(motor_id, duty_cycle, direction='up')
         time.sleep(duration)
         self.set_break()
         self._ramp_pwm_down(motor_id)
 
     @micropython.native
+    def _set_motor_duty(self, motor_id: int, duty_cycle: int, direction: str) -> None:
+        if motor_id == 0:
+            self.pwm_motor1_in1.duty(0 if direction == 'up' else duty_cycle)
+            self.pwm_motor1_in2.duty(duty_cycle if direction == 'up' else 0)
+            self.pwm_motor2_in1.duty(0 if direction == 'up' else duty_cycle)
+            self.pwm_motor2_in2.duty(duty_cycle if direction == 'up' else 0)
+        elif motor_id == 1:
+            self.pwm_motor1_in1.duty(0 if direction == 'up' else duty_cycle)
+            self.pwm_motor1_in2.duty(duty_cycle if direction == 'up' else 0)
+        elif motor_id == 2:
+            self.pwm_motor2_in1.duty(0 if direction == 'up' else duty_cycle)
+            self.pwm_motor2_in2.duty(duty_cycle if direction == 'up' else 0)
+
+    @micropython.native
     def _ramp_pwm_up(self, target_duty_cycle: int, motor_id: int = 0) -> None:
         step_size = 10
         for duty_cycle in range(0, target_duty_cycle + 1, step_size):
-            if motor_id == 0:
-                self.pwm_motor1_in1.duty(duty_cycle)
-                self.pwm_motor1_in2.duty(duty_cycle)
-                self.pwm_motor2_in1.duty(duty_cycle)
-                self.pwm_motor2_in2.duty(duty_cycle)
-                print(f"Ramping up PWM for both motors: {duty_cycle}%")
-            else:
-                if motor_id == 1:
-                    self.pwm_motor1_in1.duty(duty_cycle)
-                    self.pwm_motor1_in2.duty(duty_cycle)
-                elif motor_id == 2:
-                    self.pwm_motor2_in1.duty(duty_cycle)
-                    self.pwm_motor2_in2.duty(duty_cycle)
-                print(f"Ramping up PWM for motor {motor_id}: {duty_cycle}%")
+            self._set_motor_duty(motor_id, duty_cycle, direction='up')
+            print(f"Ramping up PWM for {'both motors' if motor_id == 0 else f'motor {motor_id}'}: {duty_cycle}%")
             time.sleep(0.1)
 
     @micropython.native
     def _ramp_pwm_down(self, motor_id: int = 0) -> None:
         step_size = 10
         for duty_cycle in range(100, -1, -step_size):
-            if motor_id == 0:
-                self.pwm_motor1_in1.duty(duty_cycle)
-                self.pwm_motor1_in2.duty(duty_cycle)
-                self.pwm_motor2_in1.duty(duty_cycle)
-                self.pwm_motor2_in2.duty(duty_cycle)
-                print(f"Ramping down PWM for both motors: {duty_cycle}%")
-            else:
-                if motor_id == 1:
-                    self.pwm_motor1_in1.duty(duty_cycle)
-                    self.pwm_motor1_in2.duty(duty_cycle)
-                elif motor_id == 2:
-                    self.pwm_motor2_in1.duty(duty_cycle)
-                    self.pwm_motor2_in2.duty(duty_cycle)
-                print(f"Ramping down PWM for motor {motor_id}: {duty_cycle}%")
+            self._set_motor_duty(motor_id, duty_cycle, direction='down')
+            print(f"Ramping down PWM for {'both motors' if motor_id == 0 else f'motor {motor_id}'}: {duty_cycle}%")
             time.sleep(0.1)
 
     @micropython.native
