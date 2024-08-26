@@ -7,8 +7,8 @@ from lib import lidar as Lidar
 class DeskController:
     def __init__(self):
         # Motor pins
-        self.motor1_enable = Pin(22, Pin.OUT, Pin.PULL_UP, value=1)
-        self.motor2_enable = Pin(23, Pin.OUT, Pin.PULL_UP, value=1)
+        self.motor1_enable = Pin(4, Pin.OUT, Pin.PULL_UP, value=1)
+        self.motor2_enable = Pin(5, Pin.OUT, Pin.PULL_UP, value=1)
 
         # Define PWM frequency
         pwm_freq = 10000  # 10kHz
@@ -16,8 +16,8 @@ class DeskController:
         # Initialize PWM channels
         self.pwm_motor1_in1 = PWM(Pin(15), freq=pwm_freq, duty=0)
         self.pwm_motor1_in2 = PWM(Pin(18), freq=pwm_freq, duty=0)
-        self.pwm_motor2_in1 = PWM(Pin(19), freq=pwm_freq, duty=0)
-        self.pwm_motor2_in2 = PWM(Pin(21), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in1 = PWM(Pin(2), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in2 = PWM(Pin(23), freq=pwm_freq, duty=0)
 
         # Position tracking
         self.position_motor1 = 0
@@ -48,8 +48,7 @@ class DeskController:
 
         self.lidar_motor1 = Lidar.LIDAR(self.i2c, self.LIDAR_ADDRESS_1)
         self.lidar_motor2 = Lidar.LIDAR(self.i2c, self.LIDAR_ADDRESS_2)
-        print(self.lidar_motor1.version())
-        print(self.lidar_motor2.version())
+
 
         # Min and max height
         self.min_height = 0  # Define appropriate min height

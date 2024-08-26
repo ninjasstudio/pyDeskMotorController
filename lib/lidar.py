@@ -1,10 +1,10 @@
 import struct
 import utime
+import time
 import constants as const
+from machine import I2C
 
 class LIDAR:
-    '''docstring for LIDAR.'''
-
     def __init__(self, i2c, addr):
         self.i2c = i2c
         self.addr = addr
@@ -12,8 +12,16 @@ class LIDAR:
     def addr(self):
         return self.addr
 
-    def _read(self, addr, bytes):
-        return self.i2c.readfrom_mem(self.addr, addr, bytes)
+    def _read(self, addr, bytes, retries=3, delay_ms=10):
+        for _ in range(retries):
+            try:
+                return self.i2c.readfrom_mem(self.addr, addr, bytes)
+            except OSError as e:
+                if e.args[0] == 116:  # ETIMEDOUT
+                    utime.sleep_ms(delay_ms)
+                else:
+                    raise
+        raise OSError("I2C read failed after {} retries".format(retries))
 
     def _write(self, addr, value):
         self.i2c.writeto_mem(self.addr, addr, value)
@@ -32,8 +40,12 @@ class LIDAR:
         utime.sleep_ms(500)
 
     def distance(self):
-        dist = self._read(const.DIST_LOW, 2)
-        return struct.unpack('<H', dist)[0]
+        try:
+            dist = self._read(const.DIST_LOW, 2)
+            return struct.unpack('<H', dist)[0]
+        except OSError as e:
+            print("Error reading distance:", e)
+            return None
 
     def signal_amp(self):
         amp = self._read(const.AMP_LOW, 2)
