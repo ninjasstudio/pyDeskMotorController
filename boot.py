@@ -1,3 +1,3 @@
 # boot.py -- run on boot-up
-import main
-nain.main
+from main import main
+main()

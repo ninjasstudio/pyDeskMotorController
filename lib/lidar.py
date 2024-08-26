@@ -1,4 +1,5 @@
-import struct, utime
+import struct
+import utime
 import constants as const
 
 class LIDAR:
