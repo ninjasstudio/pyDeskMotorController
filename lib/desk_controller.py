@@ -41,13 +41,15 @@ class DeskController:
 
         # Initialize I2C for TF Luna sensors
         self.i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)
+        print(str(self.i2c))
         time.sleep(1)
         slaves = self.i2c.scan()
+        print("Slaves = "+str(slaves))
         if self.LIDAR_ADDRESS_1 not in slaves or self.LIDAR_ADDRESS_2 not in slaves:
             print("Bus error: Please check LIDAR wiring")
 
-        self.lidar_motor1 = Lidar.LIDAR(self.i2c, self.LIDAR_ADDRESS_1)
-        self.lidar_motor2 = Lidar.LIDAR(self.i2c, self.LIDAR_ADDRESS_2)
+        self.lidar_motor1 = Lidar.LIDAR(self.i2c, slaves[0])
+        self.lidar_motor2 = Lidar.LIDAR(self.i2c, slaves[1])
 
 
         # Min and max height
