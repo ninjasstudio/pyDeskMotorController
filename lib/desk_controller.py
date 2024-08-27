@@ -4,7 +4,10 @@ import time
 import json
 from lib.PID import PID
 from lib import lidar as Lidar
-
+# 25.2 inch min
+# 50.8 inch max
+# 25.6 inch range
+# = 65.024 cm
 class DeskController:
     def __init__(self):
         # Motor pins
@@ -25,8 +28,8 @@ class DeskController:
         self.position_motor2 = 0
 
         # PID controllers
-        self.pid_motor1 = PID(1.0, 0.1, 0.01, setpoint=0)
-        self.pid_motor2 = PID(1.0, 0.1, 0.01, setpoint=0)
+        self.pid_motor1 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=50,proportional_on_measurement=True)
+        self.pid_motor2 = PID(1.0, 0.2, 0.05, setpoint=0,  sample_time=50,proportional_on_measurement=True)
         self.pid_motor1.output_limits = (0, 1023)  # Limit output to PWM range
         self.pid_motor2.output_limits = (0, 1023)  # Limit output to PWM range
 
@@ -59,23 +62,23 @@ class DeskController:
 
 
         # Min and max height
-        self.min_height = 0  # Define appropriate min height
-        self.max_height = 1000  # Define appropriate max height
+        self.min_height = 64.008  # Define appropriate min height
+        self.max_height = 129.032  # Define appropriate max height
 
         # Timer for checking height limits
         self.limit_check_timer = Timer(-1)
         self.limit_check_timer.init(
-            period=100, mode=Timer.PERIODIC, callback=self.check_height_limits
+            period=50, mode=Timer.PERIODIC, callback=self.check_height_limits
         )
 
         # Timer for periodic updates
         self.update_timer = Timer(-1)
-        self.update_timer.init(period=100, mode=Timer.PERIODIC, callback=self.update)
+        self.update_timer.init(period=50, mode=Timer.PERIODIC, callback=self.update)
 
         # Timer for printing PID components
         self.print_pid_timer = Timer(-1)
         self.print_pid_timer.init(
-            period=5000, mode=Timer.PERIODIC, callback=self.print_pid_components
+            period=1000, mode=Timer.PERIODIC, callback=self.print_pid_components
         )
 
     def set_debug_mode(self, debug):
@@ -292,15 +295,13 @@ class DeskController:
             p1 = self.pid_motor1.Kp * (self.pid_motor1.setpoint - pos1)
             i1 = self.pid_motor1._integral
             d1 = self.pid_motor1._derivative
-            print("Motor 1 PID components: P={}, I={}, D={}".format(p1, i1, d1))
-            print(distance_motor1)
-            print(str(self.lidar_motor1))
+            print("Motor 1 PID components and distance: P={}, I={}, D={}, Dist={}".format(p1, i1, d1, distance_motor1))
+            
 
         if distance_motor2 is not None:
             pos2 = int(distance_motor2)
             p2 = self.pid_motor2.Kp * (self.pid_motor2.setpoint - pos2)
             i2 = self.pid_motor2._integral
             d2 = self.pid_motor2._derivative
-            print("Motor 2 PID components: P={}, I={}, D={}".format(p2, i2, d2))
-            print(distance_motor1)
-            print(str(self.lidar_motor1))
+            print("Motor 1 PID components and distance: P={}, I={}, D={}, Dist={}".format(p1, i1, d1, distance_motor2))
+            
