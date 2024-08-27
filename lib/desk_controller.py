@@ -1,3 +1,4 @@
+
 from machine import Pin, PWM, Timer, I2C
 import time
 import json
@@ -40,8 +41,8 @@ class DeskController:
         self.LIDAR_ADDRESS_2 = 0x10
 
         # Initialize I2C for TF Luna sensors
-        self.i2c = I2C(0, scl=Pin(14), sda=Pin(27), freq=400000)
-        self.i2c2 = I2C(1, scl=Pin(26), sda=Pin(25), freq=400000)
+        self.i2c = I2C(0, scl=Pin(27), sda=Pin(14), freq=400000)
+        self.i2c2 = I2C(1, scl=Pin(25), sda=Pin(26), freq=400000)
 
         
 
@@ -292,6 +293,8 @@ class DeskController:
             i1 = self.pid_motor1._integral
             d1 = self.pid_motor1._derivative
             print("Motor 1 PID components: P={}, I={}, D={}".format(p1, i1, d1))
+            print(distance_motor1)
+            print(str(self.lidar_motor1))
 
         if distance_motor2 is not None:
             pos2 = int(distance_motor2)
@@ -299,3 +302,5 @@ class DeskController:
             i2 = self.pid_motor2._integral
             d2 = self.pid_motor2._derivative
             print("Motor 2 PID components: P={}, I={}, D={}".format(p2, i2, d2))
+            print(distance_motor1)
+            print(str(self.lidar_motor1))
