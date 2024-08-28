@@ -24,7 +24,7 @@ class LIDAR:
     def distance(self):
         self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
         response = self._read_response(9)
-        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+        if response and len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
             dist = struct.unpack('<H', response[2:4])[0]
             if self._verify_checksum(response):
                 return dist
@@ -33,7 +33,7 @@ class LIDAR:
     def signal_amp(self):
         self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
         response = self._read_response(9)
-        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+        if response and len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
             amp = struct.unpack('<H', response[4:6])[0]
             if self._verify_checksum(response):
                 return amp
@@ -42,7 +42,7 @@ class LIDAR:
     def temp(self):
         self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
         response = self._read_response(9)
-        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+        if response and len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
             temp = struct.unpack('<H', response[6:8])[0]
             if self._verify_checksum(response):
                 return temp / 8 - 256
@@ -51,7 +51,7 @@ class LIDAR:
     def version(self):
         self._send_command(b'\x5A\x04\x01\x00')  # Get version
         response = self._read_response(7)
-        if len(response) == 7 and response[0] == 0x5A and response[2] == 0x01:
+        if response and len(response) == 7 and response[0] == 0x5A and response[2] == 0x01:
             return 'LiDAR Version {}.{}.{}'.format(response[5], response[4], response[3])
         return None
 
@@ -83,7 +83,7 @@ class LIDAR:
     def read_all(self):
         self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
         response = self._read_response(9)
-        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+        if response and len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
             dist = struct.unpack('<H', response[2:4])[0]
             amp = struct.unpack('<H', response[4:6])[0]
             temp = struct.unpack('<H', response[6:8])[0]
