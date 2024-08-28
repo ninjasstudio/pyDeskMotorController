@@ -4,32 +4,79 @@ import time
 import json
 from lib.PID import PID
 from lib import lidar as Lidar
-# 25.2 inch min
-# 50.8 inch max
-# 25.6 inch range
-# = 65.024 cm
+# +----------------+-------------+
+# | Component      | GPIO Pin    |
+# +----------------+-------------+
+# | Left Motor     |             |
+# |   PWM Up       | GPIO 5      |
+# |   PWM Dn       | GPIO 4      |
+# |   LOW EN       | GPIO 2      |
+# +----------------+-------------+
+# | Right Motor    |             |
+# |   PWM Up       | GPIO 23     |
+# |   PWM Dn       | GPIO 22     |
+# |   LOW EN       | GPIO 21     |
+# +----------------+-------------+
+# | Lidar Left     |             |
+# |   SCL/TX       | GPIO 27     |
+# |   SDA/RX       | GPIO 14     |
+# +----------------+-------------+
+# | Lidar Right    |             |
+# |   SCL/TX       | GPIO 26     |
+# |   SDA/RX       | GPIO 25     |
+# +----------------+-------------+
+
+# +-------------------------------+-------------------+
+# | Specification                 | Value             |
+# +-------------------------------+-------------------+
+# | Desk Min                      | 25.2 in / 64.0 cm |
+# | Desk Max                      | 50.8 in / 129.0 cm|
+# | Desk Range                    | 25.6 in / 65.0 cm |
+# +-------------------------------+-------------------+
+# | Lidar Range                   | 6cm <-> 300 cm±6cm|
+# | Amp                           | 2000              |
+# | Laser Diameter at 129cm       | 3cm               |
+# | Lidar max rate                | 400kbps i2c       |
+# +-------------------------------+-------------------+
+# | PWM Freq                      | 10khz             |
+# | Motor Voltage                 | 33v               |
+# | Power Supply Voltage          | 24v               |
+# +-------------------------------+-------------------+
+# | Proportional Gain             | 1.1               |
+# | Integral Gain                 | 0.1               |
+# | Derivative Gain               | 0.1               |
+# +-------------------------------+-------------------+
+# | Lidar Max diff before         |                   |
+# | correction                    | 3cm               |
+# +-------------------------------+-------------------+
+# | Lidar Max diff before panic   | 6cm               |
+# +-------------------------------+-------------------+
+# | Max run time                  | 15 sec            |
+# | Cool off time                 | 90 sec            |
+# +-------------------------------+-------------------+
+
 class DeskController:
     def __init__(self):
         # Motor pins
-        self.motor1_enable = Pin(4, Pin.OUT, Pin.PULL_UP, value=1)
-        self.motor2_enable = Pin(5, Pin.OUT, Pin.PULL_UP, value=1)
+        self.motor1_enable = Pin(2, Pin.OUT, Pin.PULL_UP, value=1)
+        self.motor2_enable = Pin(21, Pin.OUT, Pin.PULL_UP, value=1)
 
         # Define PWM frequency
         pwm_freq = 10000  # 10kHz
 
         # Initialize PWM channels
-        self.pwm_motor1_in1 = PWM(Pin(15), freq=pwm_freq, duty=0)
-        self.pwm_motor1_in2 = PWM(Pin(18), freq=pwm_freq, duty=0)
-        self.pwm_motor2_in1 = PWM(Pin(2), freq=pwm_freq, duty=0)
-        self.pwm_motor2_in2 = PWM(Pin(23), freq=pwm_freq, duty=0)
+        self.pwm_motor1_in1 = PWM(Pin(5), freq=pwm_freq, duty=0)
+        self.pwm_motor1_in2 = PWM(Pin(4), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in1 = PWM(Pin(23), freq=pwm_freq, duty=0)
+        self.pwm_motor2_in2 = PWM(Pin(22), freq=pwm_freq, duty=0)
 
         # Position tracking
         self.position_motor1 = 0
         self.position_motor2 = 0
 
         # PID controllers
-        self.pid_motor1 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=50,proportional_on_measurement=True)
-        self.pid_motor2 = PID(1.0, 0.2, 0.05, setpoint=0,  sample_time=50,proportional_on_measurement=True)
+        self.pid_motor1 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=10,proportional_on_measurement=True)
+        self.pid_motor2 = PID(1.0, 0.2, 0.05, setpoint=0,  sample_time=10,proportional_on_measurement=True)
         self.pid_motor1.output_limits = (0, 1023)  # Limit output to PWM range
         self.pid_motor2.output_limits = (0, 1023)  # Limit output to PWM range
 
@@ -44,8 +91,8 @@ class DeskController:
         self.LIDAR_ADDRESS_2 = 0x10
 
         # Initialize I2C for TF Luna sensors
-        self.i2c = I2C(0, scl=Pin(27), sda=Pin(14), freq=400000)
-        self.i2c2 = I2C(1, scl=Pin(25), sda=Pin(26), freq=400000)
+        self.i2c = I2C(0, scl=Pin(27), sda=Pin(14), freq=1000)
+        self.i2c2 = I2C(1, scl=Pin(26), sda=Pin(25), freq=1000)
 
         
 
