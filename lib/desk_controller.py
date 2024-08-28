@@ -3,7 +3,6 @@ import time
 import json
 from lib.PID import PID
 from lib.lidar import LIDAR
-import math
 
 class DeskController:
     """
@@ -35,22 +34,13 @@ class DeskController:
         self.position_motor1 = 0
         self.position_motor2 = 0
 
-        # State-space controller parameters
-        # L is the state feedback gain vector [position_gain, velocity_gain]
-        self.L = [2.93, 0.11]
-
-        # Cascade control setup with separate position and velocity loops for each motor
-        # The outer loop (position) feeds into the inner loop (velocity)
-        self.position_loop1 = PID(13.905, 4, 0, setpoint=0, sample_time=10)
-        self.velocity_loop1 = PID(0.508, 5, 0, setpoint=0, sample_time=10)
-        self.position_loop2 = PID(13.905, 4, 0, setpoint=0, sample_time=10)
-        self.velocity_loop2 = PID(0.508, 5, 0, setpoint=0, sample_time=10)
+        # PID Controllers for each motor
+        self.pid_motor1 = PID(13.905, 4, 0, setpoint=0, sample_time=10)
+        self.pid_motor2 = PID(13.905, 4, 0, setpoint=0, sample_time=10)
 
         # Set output limits for the PID controllers to match PWM range
-        self.position_loop1.output_limits = (-1023, 1023)
-        self.velocity_loop1.output_limits = (-1023, 1023)
-        self.position_loop2.output_limits = (-1023, 1023)
-        self.velocity_loop2.output_limits = (-1023, 1023)
+        self.pid_motor1.output_limits = (-1023, 1023)
+        self.pid_motor2.output_limits = (-1023, 1023)
 
         # Non-volatile memory (NVM) storage for saving desk position
         self.nvm_file = "desk_position.json"
@@ -128,6 +118,21 @@ class DeskController:
         self.pwm_motor1_in2.duty(0)
         self.pwm_motor2_in1.duty(0)
         self.pwm_motor2_in2.duty(0)
+    def ease_in_out(self, t: float) -> float:
+        """Ease in out function for smooth acceleration and deceleration."""
+        return t * t * (3 - 2 * t)
+
+    def move_motor_smooth(self, motor_id: int, target_duty: int, duration: float) -> None:
+        """Move motor with smooth start and stop."""
+        steps = 100
+        step_duration = duration / steps
+        for step in range(steps + 1):
+            progress = step / steps
+            eased_progress = self.ease_in_out(progress)
+            current_duty = int(eased_progress * target_duty)
+            self._set_motor_duty(motor_id, current_duty)
+            time.sleep(step_duration)
+        self.set_brake()
 
     def _set_motor_duty(self, motor_id, duty_cycle):
         """
@@ -169,13 +174,13 @@ class DeskController:
 
     def move_to_position(self, target_position):
         """
-        Move the desk to a target position using state-space and cascade control.
+        Move the desk to a target position using PID control.
 
         Args:
             target_position (float): The target position in cm.
         """
-        self.position_loop1.setpoint = target_position
-        self.position_loop2.setpoint = target_position
+        self.pid_motor1.setpoint = target_position
+        self.pid_motor2.setpoint = target_position
         
         while True:
             distance_motor1 = self.lidar_motor1.distance()
@@ -185,29 +190,23 @@ class DeskController:
                 pos1 = int(distance_motor1)
                 pos2 = int(distance_motor2)
 
-                # State-space control
+                # Calculate errors
                 error1 = target_position - pos1
                 error2 = target_position - pos2
-                velocity1 = (pos1 - self.last_positions[0]) / (time.time() - self.last_update_time)
-                velocity2 = (pos2 - self.last_positions[1]) / (time.time() - self.last_update_time)
-                
-                # Calculate control inputs using state feedback
-                u1 = self.L[0] * error1 + self.L[1] * velocity1
-                u2 = self.L[0] * error2 + self.L[1] * velocity2
 
-                # Cascade control
-                velocity_setpoint1 = self.position_loop1(pos1)
-                velocity_setpoint2 = self.position_loop2(pos2)
+                # Compute PID outputs
+                pwm1 = self.pid_motor1(error1)
+                pwm2 = self.pid_motor2(error2)
 
-                self.velocity_loop1.setpoint = velocity_setpoint1
-                self.velocity_loop2.setpoint = velocity_setpoint2
+                # Synchronize motors
+                if abs(error1 - error2) > self.max_position_difference:
+                    if error1 > error2:
+                        pwm1 -= 50
+                    else:
+                        pwm2 -= 50
 
-                # Combine state-space and cascade control outputs
-                duty_cycle1 = int(self.velocity_loop1(velocity1) + u1)
-                duty_cycle2 = int(self.velocity_loop2(velocity2) + u2)
-
-                self._set_motor_duty(1, duty_cycle1)
-                self._set_motor_duty(2, duty_cycle2)
+                self._set_motor_duty(1, int(pwm1))
+                self._set_motor_duty(2, int(pwm2))
 
                 self.last_positions = [pos1, pos2]
                 self.last_update_time = time.time()
@@ -322,8 +321,8 @@ class DeskController:
             if position_difference > self.max_position_difference:
                 print("Motors out of sync, adjusting.")
                 average_position = (distance_motor1 + distance_motor2) / 2
-                self.position_loop1.setpoint = average_position
-                self.position_loop2.setpoint = average_position
+                self.pid_motor1.setpoint = average_position
+                self.pid_motor2.setpoint = average_position
 
     def run_diagnostics(self):
         """
