@@ -284,8 +284,11 @@ class DeskController:
 
             # Calculate velocities
             dt = time.time() - self.last_update_time
-            velocity1 = (pos1 - self.last_positions[0]) / dt
-            velocity2 = (pos2 - self.last_positions[1]) / dt
+            velocity1=0
+            velocity2=0
+            if dt!=0:
+                velocity1 = (pos1 - self.last_positions[0]) / dt
+                velocity2 = (pos2 - self.last_positions[1]) / dt
 
             # Update last positions and time
             self.last_positions = [pos1, pos2]
