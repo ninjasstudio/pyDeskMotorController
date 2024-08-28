@@ -1,9 +1,9 @@
-
-from machine import Pin, PWM, Timer, I2C
+from machine import Pin, PWM, Timer, UART
 import time
 import json
 from lib.PID import PID
-from lib import lidar as Lidar
+from lib.lidar import LIDAR
+
 # +----------------+-------------+
 # | Component      | GPIO Pin    |
 # +----------------+-------------+
@@ -18,13 +18,14 @@ from lib import lidar as Lidar
 # |   LOW EN       | GPIO 21     |
 # +----------------+-------------+
 # | Lidar Left     |             |
-# |   SCL/TX       | GPIO 27     |
-# |   SDA/RX       | GPIO 14     |
+# |   TX           | GPIO 27     |
+# |   RX           | GPIO 14     |
 # +----------------+-------------+
 # | Lidar Right    |             |
-# |   SCL/TX       | GPIO 26     |
-# |   SDA/RX       | GPIO 25     |
+# |   TX           | GPIO 26     |
+# |   RX           | GPIO 25     |
 # +----------------+-------------+
+
 
 # +-------------------------------+-------------------+
 # | Specification                 | Value             |
@@ -75,8 +76,8 @@ class DeskController:
         self.position_motor2 = 0
 
         # PID controllers
-        self.pid_motor1 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=10,proportional_on_measurement=True)
-        self.pid_motor2 = PID(1.0, 0.2, 0.05, setpoint=0,  sample_time=10,proportional_on_measurement=True)
+        self.pid_motor1 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=10, proportional_on_measurement=True)
+        self.pid_motor2 = PID(1.0, 0.2, 0.05, setpoint=0, sample_time=10, proportional_on_measurement=True)
         self.pid_motor1.output_limits = (0, 1023)  # Limit output to PWM range
         self.pid_motor2.output_limits = (0, 1023)  # Limit output to PWM range
 
@@ -86,27 +87,13 @@ class DeskController:
         # Debug mode
         self.debug_mode = False
 
-        # LIDAR addresses
-        self.LIDAR_ADDRESS_1 = 0x10
-        self.LIDAR_ADDRESS_2 = 0x10
+        # Initialize UART for TF Luna sensors
+        uart1 = UART(1, baudrate=115200, tx=Pin(27), rx=Pin(14))
+        uart2 = UART(2, baudrate=115200, tx=Pin(26), rx=Pin(25))
 
-        # Initialize I2C for TF Luna sensors
-        self.i2c = I2C(0, scl=Pin(14), sda=Pin(27), freq=100)
-        self.i2c2 = I2C(1, scl=Pin(26), sda=Pin(25), freq=100)
-
-        
-
-        print(str(self.i2c) + ": " + str(self.i2c2))
-        time.sleep(1)
-        slaves = self.i2c.scan()
-        slaves2 = self.i2c2.scan()
-        print("Slaves = "+str(slaves) + ":" + str(slaves2)) 
-        if self.LIDAR_ADDRESS_1 not in slaves or self.LIDAR_ADDRESS_2 not in slaves2:
-            print("Bus error: Please check LIDAR wiring")
-
-        self.lidar_motor1 = Lidar.LIDAR(self.i2c, slaves[0])
-        self.lidar_motor2 = Lidar.LIDAR(self.i2c2, slaves[0])
-
+        # Initialize LIDAR sensors
+        self.lidar_motor1 = LIDAR(uart1)
+        self.lidar_motor2 = LIDAR(uart2)
 
         # Min and max height
         self.min_height = 64.008  # Define appropriate min height
@@ -350,5 +337,5 @@ class DeskController:
             p2 = self.pid_motor2.Kp * (self.pid_motor2.setpoint - pos2)
             i2 = self.pid_motor2._integral
             d2 = self.pid_motor2._derivative
-            print("Motor 1 PID components and distance: P={}, I={}, D={}, Dist={}".format(p2, i2, d2, distance_motor2))
+            print("Motor 2 PID components and distance: P={}, I={}, D={}, Dist={}".format(p2, i2, d2, distance_motor2))
             

@@ -2,94 +2,92 @@ import struct
 import utime
 import time
 import constants as const
-from machine import I2C
+from machine import UART
 
 class LIDAR:
-    def __init__(self, i2c, addr):
-        self.i2c = i2c
-        self.addr = addr
-
-    def addr(self):
-        return self.addr
-
-    def _read(self, addr, bytes, retries=3, delay_ms=10):
-        for _ in range(retries):
-            try:
-                return self.i2c.readfrom_mem(self.addr, addr, bytes)
-            except OSError as e:
-                if e.args[0] == 116:  # ETIMEDOUT
-                    utime.sleep_ms(delay_ms)
-                else:
-                    raise
-        raise OSError("I2C read failed after {} retries".format(retries))
-
-    def _write(self, addr, value):
-        self.i2c.writeto_mem(self.addr, addr, value)
-
-    def save(self):
-        self._write(const.SAVE, 0x01)
-        utime.sleep_ms(100)
-
-    def reboot(self):
-        utime.sleep_ms(50)
-        self.save()
-        self._write(const.SHUTDOWN_REBOOT, 0x02)
-
-    def _save_reboot(self):
-        self.reboot()
-        utime.sleep_ms(500)
-
+    def __init__(self, uart, baud_rate=115200):
+        self.uart = uart
+        self.uart.init(baudrate=baud_rate, bits=8, parity=None, stop=1)
+        
+    def _send_command(self, command):
+        self.uart.write(command)
+        
+    def _read_response(self, length):
+        return self.uart.read(length)
+    
+    def _calculate_checksum(self, data):
+        return sum(data) & 0xFF
+    
+    def _verify_checksum(self, data):
+        return self._calculate_checksum(data[:-1]) == data[-1]
+    
     def distance(self):
-        try:
-            dist = self._read(const.DIST_LOW, 2)
-            return struct.unpack('<H', dist)[0]
-        except OSError as e:
-            print("Error reading distance:", e)
-            return None
+        self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
+        response = self._read_response(9)
+        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+            dist = struct.unpack('<H', response[2:4])[0]
+            if self._verify_checksum(response):
+                return dist
+        return None
 
     def signal_amp(self):
-        amp = self._read(const.AMP_LOW, 2)
-        return int(struct.unpack('<H', amp)[0])
+        self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
+        response = self._read_response(9)
+        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+            amp = struct.unpack('<H', response[4:6])[0]
+            if self._verify_checksum(response):
+                return amp
+        return None
 
     def temp(self):
-        temp = self._read(const.TEMP_LOW, 2)
-        return int(struct.unpack('<H', temp)[0]) * 0.01
+        self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
+        response = self._read_response(9)
+        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+            temp = struct.unpack('<H', response[6:8])[0]
+            if self._verify_checksum(response):
+                return temp / 8 - 256
+        return None
 
     def version(self):
-        v = self._read(const.VERSION_REVISION, 3)
-        return 'LiDAR Version {}.{}.{}'.format(v[2], v[1], v[0])
+        self._send_command(b'\x5A\x04\x01\x00')  # Get version
+        response = self._read_response(7)
+        if len(response) == 7 and response[0] == 0x5A and response[2] == 0x01:
+            return 'LiDAR Version {}.{}.{}'.format(response[5], response[4], response[3])
+        return None
 
-    def set_frequency(self, freq=0x64):
-        self._write(const.FPS_LOW, freq)
-        self._save_reboot()
+    def set_frequency(self, freq=100):
+        command = struct.pack('<BBHB', 0x5A, 0x06, 0x03, freq, 0x00)
+        self._send_command(command)
+        self._send_command(b'\x5A\x04\x11\x00')  # Save settings
 
     def power_saving_mode(self, power_saving_mode=True):
         val = 0x01 if power_saving_mode else 0x00
-        self._write(const.LOW_POWER, val)
+        command = struct.pack('<BBBBB', 0x5A, 0x05, 0x35, val, 0x00)
+        self._send_command(command)
+        self._send_command(b'\x5A\x04\x11\x00')  # Save settings
 
     def on_off(self, on=True):
-        val = 0x00 if on else 0x01
-        self._write(const.ENABLE, val)
+        val = 0x01 if on else 0x00
+        command = struct.pack('<BBBBB', 0x5A, 0x05, 0x07, val, 0x00)
+        self._send_command(command)
 
     def reset(self):
-        self._write(const.RESTORE_FACTORY_DEFAULTS, 0x01)
-        self._save_reboot()
+        self._send_command(b'\x5A\x04\x10\x00')  # Restore factory settings
+        self._send_command(b'\x5A\x04\x11\x00')  # Save settings
 
-    def set_min_max(self, min, max):
-        min *= 10
-        max *= 10
-
-        high, low  = min >> 8, min & 0XFF
-        self._write(const.MIN_DIST_HIGH, high)
-        self._write(const.MIN_DIST_LOW, low)
-
-        high, low  = max >> 8, max & 0XFF
-        self._write(const.MAX_DIST_HIGH, high)
-        self._write(const.MAX_DIST_LOW, low)
-        self._save_reboot()
+    def set_min_max(self, min_dist, max_dist):
+        command = struct.pack('<BBHHB', 0x5A, 0x09, 0x3A, min_dist, max_dist, 0x00)
+        self._send_command(command)
+        self._send_command(b'\x5A\x04\x11\x00')  # Save settings
 
     def read_all(self):
-        return 'Distance {}, ChipTemp {}, SignalAmp {}'.format(
-        self.distance(),
-        self.temp(),
-        self.signal_amp())
+        self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
+        response = self._read_response(9)
+        if len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+            dist = struct.unpack('<H', response[2:4])[0]
+            amp = struct.unpack('<H', response[4:6])[0]
+            temp = struct.unpack('<H', response[6:8])[0]
+            if self._verify_checksum(response):
+                return 'Distance {}, ChipTemp {}, SignalAmp {}'.format(
+                    dist, temp / 8 - 256, amp)
+        return None
