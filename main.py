@@ -61,8 +61,8 @@ def main() -> None:
     desk.lidar_motor1.set_frequency(100)
     desk.lidar_motor2.set_min_max(64, 129)
     desk.lidar_motor2.set_frequency(100)
-    desk.min_height = 64
-    desk.max_height = 129
+    #desk.min_height = 64
+    #desk.max_height = 129
 
     print("Starting main loop")
     while True:

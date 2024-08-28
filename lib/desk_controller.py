@@ -8,9 +8,9 @@ from lib import lidar as Lidar
 # | Component      | GPIO Pin    |
 # +----------------+-------------+
 # | Left Motor     |             |
-# |   PWM Up       | GPIO 5      |
-# |   PWM Dn       | GPIO 4      |
-# |   LOW EN       | GPIO 2      |
+# |   PWM Up       | GPIO 19     |
+# |   PWM Dn       | GPIO 18     |
+# |   LOW EN       | GPIO 17     |
 # +----------------+-------------+
 # | Right Motor    |             |
 # |   PWM Up       | GPIO 23     |
@@ -58,15 +58,15 @@ from lib import lidar as Lidar
 class DeskController:
     def __init__(self):
         # Motor pins
-        self.motor1_enable = Pin(2, Pin.OUT, Pin.PULL_UP, value=1)
+        self.motor1_enable = Pin(17, Pin.OUT, Pin.PULL_UP, value=1)
         self.motor2_enable = Pin(21, Pin.OUT, Pin.PULL_UP, value=1)
 
         # Define PWM frequency
         pwm_freq = 10000  # 10kHz
 
         # Initialize PWM channels
-        self.pwm_motor1_in1 = PWM(Pin(5), freq=pwm_freq, duty=0)
-        self.pwm_motor1_in2 = PWM(Pin(4), freq=pwm_freq, duty=0)
+        self.pwm_motor1_in1 = PWM(Pin(19), freq=pwm_freq, duty=0)
+        self.pwm_motor1_in2 = PWM(Pin(18), freq=pwm_freq, duty=0)
         self.pwm_motor2_in1 = PWM(Pin(23), freq=pwm_freq, duty=0)
         self.pwm_motor2_in2 = PWM(Pin(22), freq=pwm_freq, duty=0)
 
@@ -91,8 +91,8 @@ class DeskController:
         self.LIDAR_ADDRESS_2 = 0x10
 
         # Initialize I2C for TF Luna sensors
-        self.i2c = I2C(0, scl=Pin(27), sda=Pin(14), freq=1000)
-        self.i2c2 = I2C(1, scl=Pin(26), sda=Pin(25), freq=1000)
+        self.i2c = I2C(0, scl=Pin(14), sda=Pin(27), freq=100)
+        self.i2c2 = I2C(1, scl=Pin(26), sda=Pin(25), freq=100)
 
         
 
@@ -350,5 +350,5 @@ class DeskController:
             p2 = self.pid_motor2.Kp * (self.pid_motor2.setpoint - pos2)
             i2 = self.pid_motor2._integral
             d2 = self.pid_motor2._derivative
-            print("Motor 1 PID components and distance: P={}, I={}, D={}, Dist={}".format(p1, i1, d1, distance_motor2))
+            print("Motor 1 PID components and distance: P={}, I={}, D={}, Dist={}".format(p2, i2, d2, distance_motor2))
             
