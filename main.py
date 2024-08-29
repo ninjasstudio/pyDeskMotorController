@@ -43,21 +43,35 @@ def main() -> None:
     #print("Motor direction test complete.")
 
     #print("Starting main loop")
-    while True:
-        dist1 = desk.lidar_motor1.distance()
-        dist2 = desk.lidar_motor2.distance()
-        print(str(desk.lidar_motor1.print_payload_table()))
-        print(str(desk.lidar_motor2.print_payload_table()))
-        print(f"LIDAR 1 distance: {dist1 if dist1 is not None else 'No reading'}")
-        print(f"LIDAR 2 distance: {dist2 if dist2 is not None else 'No reading'}")
-        time.sleep(0.1)
-        for i in range(0,3000):
-            dist1 = desk.lidar_motor1.distance()
-            dist2 = desk.lidar_motor2.distance()
-            print(str(desk.lidar_motor1.read_all()))
-            print(f"LIDAR 1 distance: {dist1 if dist1 is not None else 'No reading'}")
-            print(f"LIDAR 2 distance: {dist2 if dist2 is not None else 'No reading'}")
+    desk.lidar_motor1.set_min_max(40,150)
+    desk.lidar_motor1.set_frequency(100)
+    desk.lidar_motor1.set_amp_threshold(300,40)
+    desk.lidar_motor2.set_min_max(40,150)
+    desk.lidar_motor2.set_frequency(100)
+    desk.lidar_motor2.set_amp_threshold(300,40)
+    while True: 
+        for i in range(0,65535):
+            data1 = desk.lidar_motor1.read_all()            
             time.sleep(1)
+            if data1 is not None and len(data1)>1:
+                dist1=data1["Distance"]
+                temp1=data1["ChipTemp"]
+                amp1=data1["SignalAmp"]
+            else:
+                response=data["response"]
+            
+            
+
+            dist2 = desk.lidar_motor2.distance()
+            time.sleep(1)
+            
+            time.sleep(1)  
+            print(f"LIDAR 1 distance: {dist1 if dist1 is not None else 'No reading'}")
+            time.sleep(1)
+            print(str(desk.lidar_motor2.print_payload_table()))
+            time.sleep(1)
+            print(f"LIDAR 2 distance: {dist2 if dist2 is not None else 'No reading'}")
+            time.sleep(1)   
         
         #last_position = desk.load_position()
         desk.position_motor1 = dist1
