@@ -91,3 +91,22 @@ class LIDAR:
                 return 'Distance {}, ChipTemp {}, SignalAmp {}'.format(
                     dist, temp / 8 - 256, amp)
         return None
+
+    def print_payload_table(self):
+        self._send_command(b'\x5A\x04\x04\x00')  # Trigger measurement
+        response = self._read_response(9)
+        if response and len(response) == 9 and response[0] == 0x59 and response[1] == 0x59:
+            dist = struct.unpack('<H', response[2:4])[0]
+            amp = struct.unpack('<H', response[4:6])[0]
+            temp = struct.unpack('<H', response[6:8])[0]
+            checksum = response[8]
+            if self._verify_checksum(response):
+                print("| Byte | 0   | 1   | 2       | 3       | 4       | 5       | 6       | 7       | 8         |")
+                print("|------|-----|-----|---------|---------|---------|---------|---------|---------|-----------|")
+                print("| Desc | 0x59| 0x59| Dist_L  | Dist_H  | Amp_L   | Amp_H   | Temp_L  | Temp_H  | Check_sum |")
+                print(f"| Data | {response[0]:02X}  | {response[1]:02X}  | {response[2]:02X}      | {response[3]:02X}      | {response[4]:02X}      | {response[5]:02X}      | {response[6]:02X}      | {response[7]:02X}      | {response[8]:02X}       |")
+                print(f"\nDist: {dist} cm\nAmp: {amp}\nTemp: {temp / 8 - 256:.2f}℃\nChecksum: {checksum}")
+            else:
+                print("Checksum verification failed.")
+        else:
+            print("Invalid response or no response received.")

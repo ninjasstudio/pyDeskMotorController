@@ -49,15 +49,15 @@ class DeskController:
         self.debug_mode = False
 
         # Initialize UART for TF Luna LIDAR sensors
-        uart1 = UART(1, baudrate=115200, tx=27, rx=14)
-        uart2 = UART(2, baudrate=115200, tx=26, rx=25)
+        uart1 = UART(1, baudrate=460800, tx=27, rx=14)
+        uart2 = UART(2, baudrate=460800, tx=26, rx=25)
 
         # Initialize LIDAR sensors
         self.lidar_motor1 = LIDAR(uart1)
         self.lidar_motor2 = LIDAR(uart2)
 
         # Define min and max height limits for the desk
-        self.min_height = 64.008  # cm
+        self.min_height = 50.008  # cm
         self.max_height = 129.032  # cm
 
         # Timer for periodic checking of height limits and motor synchronization
@@ -71,8 +71,8 @@ class DeskController:
         self.update_timer.init(period=10, mode=Timer.PERIODIC, callback=self.update)
 
         # Safety parameters
-        self.max_position_difference = 3  # Maximum allowed difference between motor positions (cm)
-        self.max_velocity = 5  # Maximum allowed velocity (cm/s)
+        self.max_position_difference = 12  # Maximum allowed difference between motor positions (cm)
+        self.max_velocity = 50  # Maximum allowed velocity (cm/s)
         self.last_positions = [0, 0]  # Last recorded positions of both motors
         self.last_update_time = time.time()  # Timestamp of last update
 
@@ -328,6 +328,32 @@ class DeskController:
                 self.pid_motor2.setpoint = average_position
 
     def run_diagnostics(self):
+        """
+        Run a diagnostic test on the desk system.
+
+        This method performs a series of movements to test the desk's
+        functionality and the LIDAR sensors' accuracy.
+        """
+        print("Running diagnostics...")
+        # Test motor movement
+        self.move_to_position(80)  # Move to middle position
+        time.sleep(2)
+        self.move_to_position(70)  # Move down slightly
+        time.sleep(2)
+        self.move_to_position(90)  # Move up slightly
+        time.sleep(2)
+        self.home_position()  # Return to home position
+
+        # Test LIDAR sensors
+        print("Testing LIDAR sensors...")
+        for _ in range(10):
+            distance1 = self.lidar_motor1.distance()
+            distance2 = self.lidar_motor2.distance()
+            print(f"LIDAR 1: {distance1}, LIDAR 2: {distance2}")
+            time.sleep(0.5)
+
+        print("Diagnostics complete.")
+    def run_diagnostics2(self):
         """
         Run a diagnostic test on the desk system.
 
