@@ -13,7 +13,7 @@ class DeskController:
     error logging capabilities.
     """
 
-    def __init__(self):
+    def __init__(self, debug=False):
         """
         Initialize the DeskController with all necessary components and parameters.
         """
@@ -46,14 +46,14 @@ class DeskController:
         self.nvm_file = "desk_position.json"
 
         # Debug mode flag
-        self.debug_mode = False
+        self.debug_mode = debug
 
         # Initialize UART for TF Luna LIDAR sensors
-        uart1 = UART(1, baudrate=38400, tx=27, rx=14)
-        uart2 = UART(2, baudrate=38400, tx=26, rx=25)
+        uart1 = UART(0, baudrate=38400, tx=27, rx=14,)
+        uart2 = UART(1, baudrate=38400, tx=26, rx=25)
 
         # Initialize LIDAR sensors
-        self.lidar_motor1 = LIDAR(uart1)
+        self.lidar_motor1 = LIDAR(uart1,baud_rate=115200, timeout=200, debug=debug,)
         self.lidar_motor2 = LIDAR(uart2)
 
         # Define min and max height limits for the desk
@@ -63,7 +63,7 @@ class DeskController:
         # Timer for periodic checking of height limits and motor synchronization
         self.limit_check_timer = Timer(-1)
         self.limit_check_timer.init(
-            period=50, mode=Timer.PERIODIC, callback=self.check_height_limits_and_sync
+            period=200, mode=Timer.PERIODIC, callback=self.check_height_limits_and_sync
         )
 
         # Timer for periodic updates of motor positions and velocities
@@ -73,7 +73,7 @@ class DeskController:
         # Safety parameters
         self.max_position_difference = 12  # Maximum allowed difference between motor positions (cm)
         self.max_velocity = 50  # Maximum allowed velocity (cm/s)
-        self.last_positions = [0, 0]  # Last recorded positions of both motors
+        self.last_positions = [53, 56]  # Last recorded positions of both motors
         self.last_update_time = time.time()  # Timestamp of last update
 
     def set_debug_mode(self, debug):

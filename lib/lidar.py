@@ -2,20 +2,34 @@ import struct
 import utime
 
 class LIDAR:
-    def __init__(self, uart, baud_rate=115200, timeout=100):
+    def __init__(self, uart, baud_rate=115200, timeout=100, debug=False, max_retries=3):
         self.uart = uart
-        self.uart.init(baudrate=baud_rate, bits=8, parity=None, stop=1, timeout=timeout, rxbuf=256, txbuf=256)
-        self.max_retries = 3
+        self.uart.init(baudrate=baud_rate, bits=8, parity=None, stop=1, timeout=timeout, rxbuf=64, txbuf=32)
+        self.max_retries = max_retries
+        self.debug = debug
+        
+    def _debug_print(self, label, data):
+        if self.debug:
+            hex_data = ' '.join(f'{b:02X}' for b in data)
+            bin_data = ' '.join(f'{b:08b}' for b in data)
+            try:
+                ascii_data = data.decode('ascii')
+            except UnicodeDecodeError:
+                ascii_data = '<non-ascii>'
+            print(f"{label} - HEX: {hex_data}, BIN: {bin_data}, ASCII: {ascii_data}")
         
     def _send_command(self, command):
+        self._debug_print("Sending", command)
         self.uart.write(command)
         
-    def _read_response(self, length, timeout_ms=100):
+    def _read_response(self, length, timeout_ms=250):
         start_time = utime.ticks_ms()
         while utime.ticks_diff(utime.ticks_ms(), start_time) < timeout_ms:
             if self.uart.any() >= length:
-                return self.uart.read(length)
-            utime.sleep_ms(10)
+                response = self.uart.read(length)
+                self._debug_print("Received", response)
+                return response
+            utime.sleep_ms(1)
         return None
     
     def _calculate_checksum(self, data):
@@ -24,7 +38,7 @@ class LIDAR:
     def _verify_checksum(self, data):
         return self._calculate_checksum(data[:-1]) == data[-1]
     
-    def _send_and_read(self, command, response_length, retries=3):
+    def _send_and_read(self, command, response_length, retries=10):
         for _ in range(retries):
             self._send_command(command)
             response = self._read_response(response_length)
@@ -91,17 +105,6 @@ class LIDAR:
 
     def read_all(self):
         return self.measure()
-
-    def print_payload_table(self):
-        measurement = self.measure()
-        if measurement:
-            print("| Byte | 0   | 1   | 2       | 3       | 4       | 5       | 6       | 7       | 8         |")
-            print("|------|-----|-----|---------|---------|---------|---------|---------|---------|-----------|")
-            print("| Desc | 0x59| 0x59| Dist_L  | Dist_H  | Amp_L   | Amp_H   | Temp_L  | Temp_H  | Check_sum |")
-            print(f"| Data | 59  | 59  | {measurement['Distance'] & 0xFF:02X}      | {measurement['Distance'] >> 8:02X}      | {measurement['SignalAmp'] & 0xFF:02X}      | {measurement['SignalAmp'] >> 8:02X}      | {int((measurement['ChipTemp'] + 256) * 8) & 0xFF:02X}      | {int((measurement['ChipTemp'] + 256) * 8) >> 8:02X}      | XX        |")
-            print(f"\nDist: {measurement['Distance']} cm\nAmp: {measurement['SignalAmp']}\nTemp: {measurement['ChipTemp']:.2f}℃")
-        else:
-            print("Invalid response or no response received.")
 
     def set_amp_threshold(self, amp_threshold, dummy_dist):
         amp_threshold_byte = amp_threshold // 10
