@@ -1,0 +1,416 @@
+[
+    {
+        "label": "Pin",
+        "importPath": "machine",
+        "description": "machine",
+        "isExtraImport": true,
+        "detail": "machine",
+        "documentation": {}
+    },
+    {
+        "label": "PWM",
+        "importPath": "machine",
+        "description": "machine",
+        "isExtraImport": true,
+        "detail": "machine",
+        "documentation": {}
+    },
+    {
+        "label": "Timer",
+        "importPath": "machine",
+        "description": "machine",
+        "isExtraImport": true,
+        "detail": "machine",
+        "documentation": {}
+    },
+    {
+        "label": "UART",
+        "importPath": "machine",
+        "description": "machine",
+        "isExtraImport": true,
+        "detail": "machine",
+        "documentation": {}
+    },
+    {
+        "label": "UART",
+        "importPath": "machine",
+        "description": "machine",
+        "isExtraImport": true,
+        "detail": "machine",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "PID",
+        "importPath": "lib.PID",
+        "description": "lib.PID",
+        "isExtraImport": true,
+        "detail": "lib.PID",
+        "documentation": {}
+    },
+    {
+        "label": "LIDAR",
+        "importPath": "lib.lidar",
+        "description": "lib.lidar",
+        "isExtraImport": true,
+        "detail": "lib.lidar",
+        "documentation": {}
+    },
+    {
+        "label": "struct",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "struct",
+        "description": "struct",
+        "detail": "struct",
+        "documentation": {}
+    },
+    {
+        "label": "utime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utime",
+        "description": "utime",
+        "detail": "utime",
+        "documentation": {}
+    },
+    {
+        "label": "constants",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "constants",
+        "description": "constants",
+        "detail": "constants",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "importPath": "main",
+        "description": "main",
+        "isExtraImport": true,
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "DeskController",
+        "importPath": "lib.desk_controller",
+        "description": "lib.desk_controller",
+        "isExtraImport": true,
+        "detail": "lib.desk_controller",
+        "documentation": {}
+    },
+    {
+        "label": "DIST_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "DIST_LOW =                  0x00   # cm\nDIST_HIGH =                 0x01\nAMP_LOW =                   0x02\nAMP_HIGH =                  0x03\nTEMP_LOW =                  0x04   # Unit: 0.01 Celsius\nTEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "DIST_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "DIST_HIGH =                 0x01\nAMP_LOW =                   0x02\nAMP_HIGH =                  0x03\nTEMP_LOW =                  0x04   # Unit: 0.01 Celsius\nTEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "AMP_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "AMP_LOW =                   0x02\nAMP_HIGH =                  0x03\nTEMP_LOW =                  0x04   # Unit: 0.01 Celsius\nTEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "AMP_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "AMP_HIGH =                  0x03\nTEMP_LOW =                  0x04   # Unit: 0.01 Celsius\nTEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "TEMP_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "TEMP_LOW =                  0x04   # Unit: 0.01 Celsius\nTEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "TEMP_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "TEMP_HIGH =                 0x05\nTICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "TICK_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "TICK_LOW =                  0x06   # Timestamp\nTICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "TICK_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "TICK_HIGH =                 0x07\nERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "ERROR_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "ERROR_LOW =                 0x08\nERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "ERROR_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "ERROR_HIGH =                0x09\nVERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION_REVISION",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "VERSION_REVISION =          0x0A\nVERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION_MINOR",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "VERSION_MINOR =             0x0B\nVERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION_MAJOR",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "VERSION_MAJOR =             0x0C\nSN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "SN",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "SN =                        0x10    # Production code in 14 bytes ASCI code (0x10 is the first byte)\nSAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "SAVE",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "SAVE =                      0x20    # Write 0x01 to save current setting\nSHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "SHUTDOWN_REBOOT",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "SHUTDOWN_REBOOT =           0x21    # Write 0x02 to reboot\nSLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "SLAVE_ADDR",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "SLAVE_ADDR =                0x22    # Default: 0x10, Range: [0x08, 0x77]\nMODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "MODE",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "MODE =                      0x23    # Default: 0x00 | Continuous ranging mode: 0x00  Trigger mode: 0x01\nTRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "TRIG_ONE_SHOT",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "TRIG_ONE_SHOT =             0x24    # 0x01: Trigger once (only on trigger mode)\nENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "ENABLE",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "ENABLE =                    0x25    # Turn on LiDAR: 0x00, Turn off LiDAR: 0x01\nFPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "FPS_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "FPS_LOW =                   0x26    # Default: 0x64 100Hz, 0xFA 250Hz\nFPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "FPS_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "FPS_HIGH =                  0x27\nLOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "LOW_POWER",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "LOW_POWER =                 0x28    # Default: 0x00, Normal: 0x00, Power saving mode: 0x01\nRESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "RESTORE_FACTORY_DEFAULTS",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "RESTORE_FACTORY_DEFAULTS =  0x29    # Write 0x01 to restore factory default settings\nAMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "AMP_THR_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "AMP_THR_LOW =               0x2A    # Default: 0x64, Amp threshold value\nMIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_DIST_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "MIN_DIST_LOW =              0x2E    # Default: 0x00, Minimum dist in cm, but not working on DUMMY_DIST\nMIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_DIST_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "MIN_DIST_HIGH =             0x2F    # Default: 0x00\nMAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_DIST_LOW",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "MAX_DIST_LOW =              0x30    # Default: 0x20, Maximum dist in cm, but not working on DUMMY_DIST\nMAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_DIST_HIGH",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "MAX_DIST_HIGH =             0x31    # Default: 0x03",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "DeskController",
+        "kind": 6,
+        "importPath": "lib.desk_controller",
+        "description": "lib.desk_controller",
+        "peekOfCode": "class DeskController:\n    \"\"\"\n    A class to control a motorized desk with two motors and LIDAR sensors for height measurement.\n    This class implements advanced control algorithms including state-space control and cascade control\n    to ensure smooth and synchronized movement of both motors. It also includes safety features and\n    error logging capabilities.\n    \"\"\"\n    def __init__(self, debug=False):\n        \"\"\"\n        Initialize the DeskController with all necessary components and parameters.",
+        "detail": "lib.desk_controller",
+        "documentation": {}
+    },
+    {
+        "label": "LIDAR",
+        "kind": 6,
+        "importPath": "lib.lidar",
+        "description": "lib.lidar",
+        "peekOfCode": "class LIDAR:\n    def __init__(self, uart, baud_rate=115200):\n        self.uart = uart\n        self.uart.init(baudrate=baud_rate, bits=8, parity=None, stop=1)\n        self.dist=0\n        self.temp=0\n        self.amp=0\n    def _send_command(self, command):\n        self.uart.write(command)\n    def _read_response(self, length):",
+        "detail": "lib.lidar",
+        "documentation": {}
+    },
+    {
+        "label": "PID",
+        "kind": 6,
+        "importPath": "lib.PID",
+        "description": "lib.PID",
+        "peekOfCode": "class PID(object):\n    \"\"\"A simple PID controller.\"\"\"\n    def __init__(\n        self,\n        Kp=1.0,\n        Ki=0.0,\n        Kd=0.0,\n        setpoint=0,\n        sample_time=None,\n        scale='s',",
+        "detail": "lib.PID",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main() -> None:\n    print(\"Initializing Desk\")\n    desk = DeskController(debug=True)\n    print(\"Setting Limits\")\n    desk.lidar_motor1.set_min_max(40,150)\n    desk.lidar_motor1.set_frequency(100)\n    desk.lidar_motor1.set_amp_threshold(3000,40)\n    desk.lidar_motor2.set_min_max(40,150)\n    desk.lidar_motor2.set_frequency(100)\n    desk.lidar_motor2.set_amp_threshold(3000,40)    ",
+        "detail": "main",
+        "documentation": {}
+    }
+]
