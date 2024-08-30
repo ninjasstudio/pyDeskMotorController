@@ -49,11 +49,11 @@ class DeskController:
         self.debug_mode = debug
 
         # Initialize UART for TF Luna LIDAR sensors
-        uart1 = UART(0, baudrate=38400, tx=27, rx=14,)
-        uart2 = UART(1, baudrate=38400, tx=26, rx=25)
+        uart1 = UART(1, baudrate=38400, tx=27, rx=14,)
+        uart2 = UART(2, baudrate=38400, tx=26, rx=25)
 
         # Initialize LIDAR sensors
-        self.lidar_motor1 = LIDAR(uart1,baud_rate=115200, timeout=200, debug=debug,)
+        self.lidar_motor1 = LIDAR(uart1)
         self.lidar_motor2 = LIDAR(uart2)
 
         # Define min and max height limits for the desk

@@ -3,10 +3,9 @@ import time
 
 def main() -> None:
     print("Initializing Desk")
-    desk = DeskController()
+    desk = DeskController(debug=True)
     print("Setting Limits")
-    desk.lidar_motor1.reset()          
-    desk.lidar_motor2.reset()          
+        
     desk.lidar_motor1.set_min_max(40,150)
     desk.lidar_motor1.set_frequency(100)
     desk.lidar_motor1.set_amp_threshold(3000,40)
@@ -14,6 +13,7 @@ def main() -> None:
     desk.lidar_motor2.set_frequency(100)
     desk.lidar_motor2.set_amp_threshold(3000,40)    
     time.sleep(1)
+    
 
     while True: 
         for i in range(0,65535):
