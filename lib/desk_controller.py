@@ -1,12 +1,12 @@
-from machine import Pin, PWM, Timer, UART
+from machine import Pin, PWM, Timer
 import time
 import json
 from lib.PID import PID
-from lib.lidar import LIDAR
+from lib.sonar import HCSR04
 
 class DeskController:
     """
-    A class to control a motorized desk with two motors and LIDAR sensors for height measurement.
+    A class to control a motorized desk with two motors and ultrasonic sensors for height measurement.
     
     This class implements advanced control algorithms including state-space control and cascade control
     to ensure smooth and synchronized movement of both motors. It also includes safety features and
@@ -48,17 +48,13 @@ class DeskController:
         # Debug mode flag
         self.debug_mode = False
 
-        # Initialize UART for TF Luna LIDAR sensors
-        uart1 = UART(1, baudrate=115200, tx=14, rx=27)
-        uart2 = UART(2, baudrate=115200, tx=25, rx=26)
-
-        # Initialize LIDAR sensors
-        self.lidar_motor1 = LIDAR(uart1)
-        self.lidar_motor2 = LIDAR(uart2)
+        # Initialize ultrasonic sensors
+        self.sonar_motor1 = HCSR04(trigger_pin=12, echo_pin=14)
+        self.sonar_motor2 = HCSR04(trigger_pin=26, echo_pin=25)
 
         # Define min and max height limits for the desk
-        self.min_height = 50.008  # cm
-        self.max_height = 129.032  # cm
+        self.min_height = 500.08  # mm
+        self.max_height = 1290.32  # mm
 
         # Timer for periodic checking of height limits and motor synchronization
         self.limit_check_timer = Timer(-1)
@@ -71,8 +67,8 @@ class DeskController:
         self.update_timer.init(period=10, mode=Timer.PERIODIC, callback=self.update)
 
         # Safety parameters
-        self.max_position_difference = 12  # Maximum allowed difference between motor positions (cm)
-        self.max_velocity = 50  # Maximum allowed velocity (cm/s)
+        self.max_position_difference = 120  # Maximum allowed difference between motor positions (mm)
+        self.max_velocity = 500  # Maximum allowed velocity (mm/s)
         self.last_positions = [0, 0]  # Last recorded positions of both motors
         self.last_update_time = time.time()  # Timestamp of last update
 
@@ -118,6 +114,7 @@ class DeskController:
         self.pwm_motor1_in2.duty(0)
         self.pwm_motor2_in1.duty(0)
         self.pwm_motor2_in2.duty(0)
+
     def ease_in_out(self, t: float) -> float:
         """Ease in out function for smooth acceleration and deceleration."""
         return t * t * (3 - 2 * t)
@@ -177,14 +174,14 @@ class DeskController:
         Move the desk to a target position using PID control.
 
         Args:
-            target_position (float): The target position in cm.
+            target_position (float): The target position in mm.
         """
         self.pid_motor1.setpoint = target_position
         self.pid_motor2.setpoint = target_position
         
         while True:
-            distance_motor1 = self.lidar_motor1.distance()
-            distance_motor2 = self.lidar_motor2.distance()
+            distance_motor1 = self.sonar_motor1.distance_mm()
+            distance_motor2 = self.sonar_motor2.distance_mm()
 
             if distance_motor1 is not None and distance_motor2 is not None:
                 pos1 = int(distance_motor1)
@@ -225,13 +222,13 @@ class DeskController:
         """
         print("Homing...")
 
-        prev_distance_motor1 = self.lidar_motor1.distance()
-        prev_distance_motor2 = self.lidar_motor2.distance()
+        prev_distance_motor1 = self.sonar_motor1.distance_mm()
+        prev_distance_motor2 = self.sonar_motor2.distance_mm()
         stable_time_start = time.time()
 
         while True:
-            current_distance_motor1 = self.lidar_motor1.distance()
-            current_distance_motor2 = self.lidar_motor2.distance()
+            current_distance_motor1 = self.sonar_motor1.distance_mm()
+            current_distance_motor2 = self.sonar_motor2.distance_mm()
 
             if current_distance_motor1 is not None and current_distance_motor2 is not None:
                 if (current_distance_motor1 >= prev_distance_motor1 and
@@ -275,8 +272,8 @@ class DeskController:
         """
         if self.debug_mode:
             print("Update function called")
-        distance_motor1 = self.lidar_motor1.distance()
-        distance_motor2 = self.lidar_motor2.distance()
+        distance_motor1 = self.sonar_motor1.distance_mm()
+        distance_motor2 = self.sonar_motor2.distance_mm()
 
         if distance_motor1 is not None and distance_motor2 is not None:
             pos1 = int(distance_motor1)
@@ -284,9 +281,9 @@ class DeskController:
 
             # Calculate velocities
             dt = time.time() - self.last_update_time
-            velocity1=0
-            velocity2=0
-            if dt!=0:
+            velocity1 = 0
+            velocity2 = 0
+            if dt != 0:
                 velocity1 = (pos1 - self.last_positions[0]) / dt
                 velocity2 = (pos2 - self.last_positions[1]) / dt
 
@@ -309,8 +306,8 @@ class DeskController:
         Args:
             timer: The timer object (not used in the function body).
         """
-        distance_motor1 = self.lidar_motor1.distance()
-        distance_motor2 = self.lidar_motor2.distance()
+        distance_motor1 = self.sonar_motor1.distance_mm()
+        distance_motor2 = self.sonar_motor2.distance_mm()
 
         if distance_motor1 is not None and distance_motor2 is not None:
             # Check height limits
@@ -332,50 +329,24 @@ class DeskController:
         Run a diagnostic test on the desk system.
 
         This method performs a series of movements to test the desk's
-        functionality and the LIDAR sensors' accuracy.
+        functionality and the ultrasonic sensors' accuracy.
         """
         print("Running diagnostics...")
         # Test motor movement
-        self.move_to_position(80)  # Move to middle position
+        self.move_to_position(800)  # Move to middle position
         time.sleep(2)
-        self.move_to_position(70)  # Move down slightly
+        self.move_to_position(700)  # Move down slightly
         time.sleep(2)
-        self.move_to_position(90)  # Move up slightly
-        time.sleep(2)
-        self.home_position()  # Return to home position
-
-        # Test LIDAR sensors
-        print("Testing LIDAR sensors...")
-        for _ in range(10):
-            distance1 = self.lidar_motor1.distance()
-            distance2 = self.lidar_motor2.distance()
-            print(f"LIDAR 1: {distance1}, LIDAR 2: {distance2}")
-            time.sleep(0.5)
-
-        print("Diagnostics complete.")
-    def run_diagnostics2(self):
-        """
-        Run a diagnostic test on the desk system.
-
-        This method performs a series of movements to test the desk's
-        functionality and the LIDAR sensors' accuracy.
-        """
-        print("Running diagnostics...")
-        # Test motor movement
-        self.move_to_position(80)  # Move to middle position
-        time.sleep(2)
-        self.move_to_position(70)  # Move down slightly
-        time.sleep(2)
-        self.move_to_position(90)  # Move up slightly
+        self.move_to_position(900)  # Move up slightly
         time.sleep(2)
         self.home_position()  # Return to home position
 
-        # Test LIDAR sensors
-        print("Testing LIDAR sensors...")
+        # Test ultrasonic sensors
+        print("Testing ultrasonic sensors...")
         for _ in range(10):
-            distance1 = self.lidar_motor1.distance()
-            distance2 = self.lidar_motor2.distance()
-            print(f"LIDAR 1: {distance1}, LIDAR 2: {distance2}")
+            distance1 = self.sonar_motor1.distance_mm()
+            distance2 = self.sonar_motor2.distance_mm()
+            print(f"Sonar 1: {distance1} mm, Sonar 2: {distance2} mm")
             time.sleep(0.5)
 
         print("Diagnostics complete.")
