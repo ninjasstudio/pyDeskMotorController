@@ -2,11 +2,10 @@ import struct
 import utime
 
 class LIDAR:
-    def __init__(self, uart, baud_rate=115200, timeout=100):
+    def __init__(self, uart, baud_rate=115200, timeout=25):
         self.uart = uart
-        self.uart.init(baudrate=baud_rate, bits=8, parity=None, stop=1, timeout=timeout, rxbuf=256, txbuf=256)
-        self.max_retries = 3
-        
+        self.uart.init(baudrate=baud_rate, bits=8, parity=None ES)
+        self.max_retries = 1     
     def _send_command(self, command):
         self.uart.write(command)
         
@@ -15,7 +14,7 @@ class LIDAR:
         while utime.ticks_diff(utime.ticks_ms(), start_time) < timeout_ms:
             if self.uart.any() >= length:
                 return self.uart.read(length)
-            utime.sleep_ms(10)
+            utime.sleep_ms(1)
         return None
     
     def _calculate_checksum(self, data):
@@ -30,7 +29,7 @@ class LIDAR:
             response = self._read_response(response_length)
             if response and len(response) == response_length:
                 return response
-            utime.sleep_ms(50)  # Wait before retry
+            utime.sleep_ms(1)  # Wait before retry
         return None
 
     def _process_measurement(self, response):

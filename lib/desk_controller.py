@@ -49,8 +49,8 @@ class DeskController:
         self.debug_mode = False
 
         # Initialize UART for TF Luna LIDAR sensors
-        uart1 = UART(1, baudrate=38400, tx=27, rx=14)
-        uart2 = UART(2, baudrate=38400, tx=26, rx=25)
+        uart1 = UART(1, baudrate=115200, tx=14, rx=27)
+        uart2 = UART(2, baudrate=115200, tx=25, rx=26)
 
         # Initialize LIDAR sensors
         self.lidar_motor1 = LIDAR(uart1)
